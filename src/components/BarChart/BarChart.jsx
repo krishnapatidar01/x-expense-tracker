@@ -20,7 +20,7 @@ export default function BarChartComponent({ data }) {
       <div className={styles.barWrapper}>
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={data} layout="vertical">
-            <XAxis type="number" axisLine={false} display="none" />
+            <XAxis type="number" axisLine={false} hide />
             <YAxis
               type="category"
               width={100}
