@@ -1,9 +1,9 @@
-import TransactionCard from '../TransactionCard/TransactionCard'
-import styles from './TransactionList.module.css'
-import Modal from '../Modal/Modal'
-import ExpenseForm from '../Forms/ExpenseForm/ExpenseForm'
-import { useEffect, useState } from 'react'
-import Pagination from '../Pagination/Pagination'
+import TransactionCard from '../TransactionCard/TransactionCard';
+import styles from './TransactionList.module.css';
+import Modal from '../Modal/Modal';
+import ExpenseForm from '../Forms/ExpenseForm/ExpenseForm';
+import { useEffect, useState } from 'react';
+import Pagination from '../Pagination/Pagination';
 
 export default function TransactionList({ transactions, title, editTransactions, balance, setBalance }) {
   const [editId, setEditId] = useState(0);
@@ -16,14 +16,16 @@ export default function TransactionList({ transactions, title, editTransactions,
   const handleDelete = (id) => {
     const item = transactions.find((i) => i.id === id);
     if (item) {
-      const price = Number(item.price);
-      setBalance((prev) => prev + price);
+      setBalance(prev => prev + Number(item.price));
 
-      const updatedTransactions = transactions.filter((i) => i.id !== id);
+      const updatedTransactions = transactions.filter(i => i.id !== id);
       editTransactions(updatedTransactions);
 
-      // Handle edge case: deleting the last item on the page
+      // Update totalPages after deletion
       const newTotalPages = Math.ceil(updatedTransactions.length / maxRecords);
+      setTotalPages(newTotalPages);
+
+      // Adjust current page if needed
       if (currentPage > newTotalPages && currentPage > 1) {
         setCurrentPage(currentPage - 1);
       }
@@ -37,17 +39,10 @@ export default function TransactionList({ transactions, title, editTransactions,
 
   useEffect(() => {
     const startIndex = (currentPage - 1) * maxRecords;
-    const endIndex = Math.min(currentPage * maxRecords, transactions.length);
-    setCurrentTransactions([...transactions].slice(startIndex, endIndex));
+    const endIndex = startIndex + maxRecords;
+    setCurrentTransactions(transactions.slice(startIndex, endIndex));
     setTotalPages(Math.ceil(transactions.length / maxRecords));
   }, [currentPage, transactions]);
-
-  useEffect(() => {
-    // Adjust current page if total pages are less after deletion
-    if (totalPages < currentPage && currentPage > 1) {
-      setCurrentPage((prev) => prev - 1);
-    }
-  }, [totalPages]);
 
   return (
     <div className={styles.transactionsWrapper}>
@@ -55,16 +50,14 @@ export default function TransactionList({ transactions, title, editTransactions,
 
       {transactions.length > 0 ? (
         <div className={styles.list}>
-          <div>
-            {currentTransactions.map((transaction) => (
-              <TransactionCard
-                details={transaction}
-                key={transaction.id}
-                handleDelete={() => handleDelete(transaction.id)}
-                handleEdit={() => handleEdit(transaction.id)}
-              />
-            ))}
-          </div>
+          {currentTransactions.map(transaction => (
+            <TransactionCard
+              details={transaction}
+              key={transaction.id}
+              handleDelete={() => handleDelete(transaction.id)}
+              handleEdit={() => handleEdit(transaction.id)}
+            />
+          ))}
           {totalPages > 1 && (
             <Pagination
               updatePage={setCurrentPage}
@@ -76,6 +69,7 @@ export default function TransactionList({ transactions, title, editTransactions,
       ) : (
         <div className={styles.emptyTransactionsWrapper}>
           <p>No transactions!</p>
+          {/* Optional: Add a button to add a transaction */}
         </div>
       )}
 
@@ -92,3 +86,4 @@ export default function TransactionList({ transactions, title, editTransactions,
     </div>
   );
 }
+
