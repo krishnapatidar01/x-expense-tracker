@@ -18,9 +18,9 @@ export default function AddBalanceForm({ setIsOpen, setBalance }) {
   }
 
   setBalance(prev => {
-    const updated = prev + incomeAmount;
-    localStorage.setItem("balance", updated);  // Save to localStorage
-    return updated;
+    const newBalance = prev + incomeAmount;
+    localStorage.setItem("balance", newBalance); // ✅ Persist income
+    return newBalance;
   });
 
   setIsOpen(false);

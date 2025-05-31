@@ -25,64 +25,66 @@ export default function ExpenseForm({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAdd = (e) => {
-    e.preventDefault();
+ const handleAdd = (e) => {
+  e.preventDefault();
+  const price = Number(formData.price);
 
-    const price = Number(formData.price);
+  if (price > balance) {
+    enqueueSnackbar("Price should be less than or equal to wallet balance", { variant: "warning" });
+    return;
+  }
 
-    if (price > balance) {
-      enqueueSnackbar("Price should be less than or equal to wallet balance", { variant: "warning" });
-      return;
-    }
+  const lastId = expenseList.length > 0 ? expenseList[0].id : 0;
 
-    const lastId = expenseList.length > 0 ? expenseList[0].id : 0;
-
-    const newExpense = {
-      ...formData,
-      id: lastId + 1,
-      price: price
-    };
-setExpenseList(expenseList);
-localStorage.setItem("expenses", JSON.stringify(expenseList));
-
-setBalance(balance);
-localStorage.setItem("balance", balance);
-
-
-    setFormData({
-      title: '',
-      category: '',
-      price: '',
-      date: '',
-    });
-
-    setIsOpen(false);
+  const newExpense = {
+    ...formData,
+    id: lastId + 1,
+    price: price
   };
 
-  const handleEdit = (e) => {
-    e.preventDefault();
+  const updatedList = [newExpense, ...expenseList];
+  setExpenseList(updatedList);
+  localStorage.setItem("expenses", JSON.stringify(updatedList)); // ✅ persist
 
-    const updatedList = expenseList.map(item => {
-      if (item.id === editId) {
-        const oldPrice = Number(item.price);
-        const newPrice = Number(formData.price);
-        const difference = oldPrice - newPrice;
+  setBalance(prev => {
+    const updated = prev - price;
+    localStorage.setItem("balance", updated); // ✅ persist
+    return updated;
+  });
 
-        if (difference < 0 && Math.abs(difference) > balance) {
-          enqueueSnackbar("Price should not exceed the wallet balance", { variant: "warning" });
-          return item; // return original if invalid
-        }
+  setFormData({ title: '', category: '', price: '', date: '' });
+  setIsOpen(false);
+};
 
-        setBalance(prev => prev + difference);
-        return { ...formData, id: editId, price: newPrice };
+ const handleEdit = (e) => {
+  e.preventDefault();
+
+  const updatedList = expenseList.map(item => {
+    if (item.id === editId) {
+      const oldPrice = Number(item.price);
+      const newPrice = Number(formData.price);
+      const difference = oldPrice - newPrice;
+
+      if (difference < 0 && Math.abs(difference) > balance) {
+        enqueueSnackbar("Price should not exceed the wallet balance", { variant: "warning" });
+        return item;
       }
 
-      return item;
-    });
+      setBalance(prev => {
+        const updated = prev + difference;
+        localStorage.setItem("balance", updated); // ✅ persist
+        return updated;
+      });
 
-    setExpenseList(updatedList);
-    setIsOpen(false);
-  };
+      return { ...formData, id: editId, price: newPrice };
+    }
+    return item;
+  });
+
+  setExpenseList(updatedList);
+  localStorage.setItem("expenses", JSON.stringify(updatedList)); // ✅ persist
+  setIsOpen(false);
+};
 
   useEffect(() => {
     if (editId) {
@@ -145,9 +147,9 @@ localStorage.setItem("balance", balance);
           {editId ? 'Edit Expense' : 'Add Expense'}
         </Button>
 
-         <Button style="secondary" shadow handleClick={() => setIsOpen(false)}>
+        <Button style="secondary" shadow handleClick={() => setIsOpen(false)}>
           Cancel
-         </Button>
+        </Button>
       </form>
     </div>
   );
