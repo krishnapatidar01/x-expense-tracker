@@ -7,19 +7,25 @@ export default function AddBalanceForm({ setIsOpen, setBalance }) {
   const [income, setIncome] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const incomeAmount = Number(income);
+  const incomeAmount = Number(income);
 
-    if (isNaN(incomeAmount) || incomeAmount <= 0) {
-      enqueueSnackbar("Income should be greater than 0", { variant: "warning" });
-      return;
-    }
+  if (isNaN(incomeAmount) || incomeAmount <= 0) {
+    enqueueSnackbar("Income should be greater than 0", { variant: "warning" });
+    return;
+  }
 
-    setBalance(prev => prev + incomeAmount);
-    setIsOpen(false);
-  };
+  setBalance(prev => {
+    const updated = prev + incomeAmount;
+    localStorage.setItem("balance", updated);  // Save to localStorage
+    return updated;
+  });
+
+  setIsOpen(false);
+};
+
 
   return (
     <div className={styles.formWrapper}>

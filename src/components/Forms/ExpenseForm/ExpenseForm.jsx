@@ -42,9 +42,12 @@ export default function ExpenseForm({
       id: lastId + 1,
       price: price
     };
+setExpenseList(expenseList);
+localStorage.setItem("expenses", JSON.stringify(expenseList));
 
-    setExpenseList(prev => [newExpense, ...prev]);
-    setBalance(prev => prev - price);
+setBalance(balance);
+localStorage.setItem("balance", balance);
+
 
     setFormData({
       title: '',
@@ -142,9 +145,9 @@ export default function ExpenseForm({
           {editId ? 'Edit Expense' : 'Add Expense'}
         </Button>
 
-        <Button style="secondary" shadow handleClick={() => setIsOpen(false)}>
+         <Button style="secondary" shadow handleClick={() => setIsOpen(false)}>
           Cancel
-        </Button>
+         </Button>
       </form>
     </div>
   );

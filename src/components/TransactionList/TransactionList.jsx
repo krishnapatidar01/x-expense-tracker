@@ -13,24 +13,31 @@ export default function TransactionList({ transactions, title, editTransactions,
   const maxRecords = 3;
   const [totalPages, setTotalPages] = useState(0);
 
-  const handleDelete = (id) => {
-    const item = transactions.find((i) => i.id === id);
-    if (item) {
-      setBalance(prev => prev + Number(item.price));
+const handleDelete = (id) => {
+  const item = transactions.find((i) => i.id === id);
+  if (item) {
+    setBalance(prev => {
+      const updatedBalance = prev + Number(item.price);
+      localStorage.setItem("balance", updatedBalance); // save updated balance
+      return updatedBalance;
+    });
 
-      const updatedTransactions = transactions.filter(i => i.id !== id);
-      editTransactions(updatedTransactions);
+    const updatedTransactions = transactions.filter(i => i.id !== id);
+    editTransactions(updatedTransactions);
 
-      // Update totalPages after deletion
-      const newTotalPages = Math.ceil(updatedTransactions.length / maxRecords);
-      setTotalPages(newTotalPages);
+    // Save updated transactions to localStorage
+    localStorage.setItem("expenses", JSON.stringify(updatedTransactions));
 
-      // Adjust current page if needed
-      if (currentPage > newTotalPages && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
+    // Update totalPages after deletion
+    const newTotalPages = Math.ceil(updatedTransactions.length / maxRecords);
+    setTotalPages(newTotalPages);
+
+    if (currentPage > newTotalPages && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
-  };
+  }
+};
+
 
   const handleEdit = (id) => {
     setEditId(id);
