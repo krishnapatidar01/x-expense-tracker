@@ -9,19 +9,8 @@ import PieChart from "../../components/PieChart/PieChart";
 import BarChart from "../../components/BarChart/BarChart";
 
 export default function Home() {
-  // const [balance, setBalance] = useState(0);
-  // const [expense, setExpense] = useState(0);
-
-  const [balance, setBalance] = useState(() => {
-  const stored = localStorage.getItem("balance");
-  return stored ? Number(stored) : 0;
-});
-
-const [expenses, setExpenses] = useState(() => {
-  const stored = localStorage.getItem("expenses");
-  return stored ? JSON.parse(stored) : [];
-});
-
+  const [balance, setBalance] = useState(0);
+  const [expense, setExpense] = useState(0);
   const [expenseList, setExpenseList] = useState([]);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -41,24 +30,24 @@ const [expenses, setExpenses] = useState(() => {
   });
 
   // Load initial data from localStorage
-  // useEffect(() => {
-  //   const localBalance = localStorage.getItem("balance");
-  //   const localExpenses = localStorage.getItem("expenses");
+  useEffect(() => {
+    const localBalance = localStorage.getItem("balance");
+    const localExpenses = localStorage.getItem("expenses");
 
-  //   setBalance(localBalance ? Number(localBalance) : 5000);
-  //   if (!localBalance) {
-  //     localStorage.setItem("balance", 5000);
-  //   }
+    setBalance(localBalance ? Number(localBalance) : 5000);
+    if (!localBalance) {
+      localStorage.setItem("balance", 5000);
+    }
 
-  //   try {
-  //     const items = JSON.parse(localExpenses);
-  //     setExpenseList(items || []);
-  //   } catch {
-  //     setExpenseList([]);
-  //   }
+    try {
+      const items = JSON.parse(localExpenses);
+      setExpenseList(items || []);
+    } catch {
+      setExpenseList([]);
+    }
 
-  //   setIsMounted(true);
-  // }, []);
+    setIsMounted(true);
+  }, []);
 
   // Save balance to localStorage (debounced)
   useEffect(() => {
