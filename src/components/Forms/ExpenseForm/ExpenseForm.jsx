@@ -25,7 +25,7 @@ export default function ExpenseForm({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
- const handleAdd = (e) => {
+const handleAdd = (e) => {
   e.preventDefault();
   const price = Number(formData.price);
 
@@ -43,19 +43,19 @@ export default function ExpenseForm({
   };
 
   const updatedList = [newExpense, ...expenseList];
-setExpenseList(updatedList);
-localStorage.setItem("expenses", JSON.stringify(updatedList));
+  setExpenseList(updatedList);
+  localStorage.setItem("expenses", JSON.stringify(updatedList));
 
-setBalance(prev => {
-  const newBalance = prev + Number(price); // or minus if it's expense
-  localStorage.setItem("balance", newBalance); // <- THIS IS IMPORTANT
-  return newBalance;
-});
-
+  setBalance(prev => {
+    const newBalance = prev - price; // ✅ subtract expense from balance
+    localStorage.setItem("balance", newBalance);
+    return newBalance;
+  });
 
   setFormData({ title: '', category: '', price: '', date: '' });
   setIsOpen(false);
 };
+
 
  const handleEdit = (e) => {
   e.preventDefault();
