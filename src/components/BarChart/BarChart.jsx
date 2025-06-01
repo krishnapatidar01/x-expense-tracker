@@ -1,9 +1,14 @@
+import React, { PureComponent } from "react";
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
-  ResponsiveContainer
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
 } from "recharts";
 import styles from "./BarChart.module.css";
 
@@ -15,15 +20,14 @@ export default function BarChartComponent({ data }) {
       <div className={styles.barWrapper}>
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={data} layout="vertical">
-            <XAxis type="number" axisLine={false} hide />
+            <XAxis type="number" axisLine={false} display="none" />
             <YAxis
               type="category"
               width={100}
               dataKey="name"
               axisLine={false}
-              tick={{ fontSize: 14 }}
             />
-            <Bar dataKey="value" fill="#8884d8" barSize={25} radius={[4, 4, 0, 0]} />
+            <Bar dataKey="value" fill="#8884d8" barSize={25} />
           </BarChart>
         </ResponsiveContainer>
       </div>
