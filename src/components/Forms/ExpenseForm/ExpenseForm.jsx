@@ -43,14 +43,15 @@ export default function ExpenseForm({
   };
 
   const updatedList = [newExpense, ...expenseList];
-  setExpenseList(updatedList);
-  localStorage.setItem("expenses", JSON.stringify(updatedList)); // ✅ persist
+setExpenseList(updatedList);
+localStorage.setItem("expenses", JSON.stringify(updatedList));
 
-  setBalance(prev => {
-    const updated = prev - price;
-    localStorage.setItem("balance", updated); // ✅ persist
-    return updated;
-  });
+setBalance(prev => {
+  const newBalance = prev + Number(price); // or minus if it's expense
+  localStorage.setItem("balance", newBalance); // <- THIS IS IMPORTANT
+  return newBalance;
+});
+
 
   setFormData({ title: '', category: '', price: '', date: '' });
   setIsOpen(false);
